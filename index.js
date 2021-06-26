@@ -11,8 +11,8 @@ const newCard =({id,
     `<div class="col-md-6 col-lg-4"  id =${id}>
     <div class="card rounded shadow">
       <div class="card-header d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-outline-success"><i class="fas fa-pencil-alt"></i></button>
-        <button type="button" class="btn btn-outline-danger"><i class="fas fa-dumpster"></i></button>
+        <button type="button" class="btn btn-outline-success"><i class="fas fa-pencil-alt" id =${id} onclick="deleteCard.apply(this,arguments )"></i></button>
+        <button type="button" class="btn btn-outline-danger" id =${id} onclick="deleteCard.apply(this,arguments )"><i class="fas fa-dumpster"></i></button>
         
       </div>
     
@@ -27,6 +27,7 @@ const newCard =({id,
       </div>
     </div>
   </div>`
+    
 
  
 
@@ -51,7 +52,9 @@ cards.map((cardObject)=>{
 };
 
  
-
+const updatedLocalStorage = ()=>{
+  localStorage.setItem("tasky",JSON.stringify({cards:globalStorage}))
+};
 
 const saveChanges = () =>{
     const taskData ={
@@ -67,11 +70,37 @@ const saveChanges = () =>{
     taskContainer.insertAdjacentHTML("beforeend",createdNewCard);
     globalStorage.push(taskData);
     
-    localStorage.setItem("tasky",JSON.stringify({cards:globalStorage}));
-
-   
+    updatedLocalStorage();
 };
 
 // issues
 // closing after savechanges[solved]...
 //  evn when refreshed the data shouldnt vanish  [solved]...
+
+
+
+
+// Features
+// delete button
+const deleteCard =(event)=>{
+  //id
+  event = window.event;
+  const targetID = event.target.id;
+  
+  const tagname = event.target.tagName;
+ 
+  //search the global storage and remove the object which matches the id
+  const newUpdatedArray = globalStorage.filter((cardObject)=>cardObject.id!== targetID)
+  globalStorage = newUpdatedArray;
+
+  updatedLocalStorage();
+ //access the DOM to remove it
+  if(tagname==="BUTTON"){
+   return taskContainer
+   .removeChild(event.target.parentNode.parentNode.parentNode);
+  };
+  
+    return taskContainer
+    .removeChild(event.target.parentNode.parentNode.parentNode.parentNode)
+
+};
